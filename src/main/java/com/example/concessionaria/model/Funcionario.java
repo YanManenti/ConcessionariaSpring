@@ -22,8 +22,9 @@ public class Funcionario {
     private String cpf;
     private String telefone;
     private String email;
-    private String cargo;
-    private Double salario;
+    @ManyToOne
+    @JoinColumn(name = "cargo_id", referencedColumnName = "id")
+    private Cargo cargo;
     private String endereco;
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL)
     private List<Compra> vendas = new ArrayList<>();
