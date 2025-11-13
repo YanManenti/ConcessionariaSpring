@@ -29,13 +29,13 @@ public class FuncionarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Funcionario> createFuncionario(Funcionario funcionario) {
+    public ResponseEntity<Funcionario> createFuncionario(@RequestBody Funcionario funcionario) {
         Funcionario createdFuncionario = funcionarioService.saveFuncionario(funcionario);
         return ResponseEntity.created(URI.create("/funcionarios/" + createdFuncionario.getId())).body(createdFuncionario);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Funcionario> updateFuncionario(@PathVariable Long id, Funcionario funcionario){
+    public ResponseEntity<Funcionario> updateFuncionario(@PathVariable Long id, @RequestBody Funcionario funcionario){
         Funcionario updatedFuncionario = funcionarioService.updateFuncionario(id, funcionario);
         return ResponseEntity.ok(updatedFuncionario);
     }
