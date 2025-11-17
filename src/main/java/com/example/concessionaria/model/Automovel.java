@@ -24,5 +24,5 @@ public class Automovel {
     private double preco;
     private boolean disponivel;
     @OneToOne(mappedBy = "automovel", cascade = CascadeType.ALL)
-    private Compra pedido;
+    private Compra compra;
 }

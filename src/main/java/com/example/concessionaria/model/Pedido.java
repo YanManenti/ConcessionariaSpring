@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-public class Compra {
+public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,9 +20,5 @@ public class Compra {
     @OneToOne
     @JoinColumn(name = "automovel_id", referencedColumnName = "id")
     private Automovel automovel;
-    @ManyToOne
-    @JoinColumn(name = "vendedor_id", referencedColumnName = "id")
-    private User vendedor;
-    private LocalDateTime dataInicio;
-    private LocalDateTime dataCompra;
+    private LocalDateTime dataPedido;
 }
