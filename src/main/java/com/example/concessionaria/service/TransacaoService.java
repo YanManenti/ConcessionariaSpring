@@ -4,6 +4,7 @@ import com.example.concessionaria.dto.request.CompraRequest;
 import com.example.concessionaria.dto.request.PedidoRequest;
 import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.model.Compra;
+import com.example.concessionaria.model.Funcionario; // Importante
 import com.example.concessionaria.model.Pedido;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.*;
@@ -21,6 +22,7 @@ public class TransacaoService {
     private final CompraRepository compraRepository;
     private final AutomovelRepository automovelRepository;
     private final UserRepository userRepository;
+    private final FuncionarioRepository funcionarioRepository; // Injeção obrigatória
 
     @Transactional
     public Pedido registrarPedido(PedidoRequest request) {
@@ -28,7 +30,7 @@ public class TransacaoService {
                 .orElseThrow(() -> new RuntimeException("Automóvel não encontrado."));
 
         if (automovel.isDisponivel()) {
-            throw new RuntimeException("Este veículo está disponível no estoque! Realize a venda direta (Compra) em vez de um Pedido.");
+            throw new RuntimeException("Este veículo está disponível! Realize a venda direta.");
         }
 
         User cliente = userRepository.findById(request.clienteId())
@@ -48,19 +50,21 @@ public class TransacaoService {
                 .orElseThrow(() -> new RuntimeException("Automóvel não encontrado."));
 
         if (!automovel.isDisponivel()) {
-            throw new RuntimeException("A venda não pode ser concluída. Este veículo não está disponível (já vendido ou reservado).");
+            throw new RuntimeException("A venda não pode ser concluída. Veículo indisponível.");
         }
 
         User cliente = userRepository.findById(request.clienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
-        User vendedor = userRepository.findById(request.vendedorId())
-                .orElseThrow(() -> new RuntimeException("Vendedor não encontrado."));
+        Funcionario funcionario = funcionarioRepository.findById(request.funcionarioId())
+                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
 
         Compra compra = new Compra();
         compra.setCliente(cliente);
         compra.setAutomovel(automovel);
-        compra.setVendedor(vendedor);
+
+        compra.setFuncionario(funcionario);
+
         compra.setDataCompra(LocalDateTime.now());
 
         automovel.setDisponivel(false);
