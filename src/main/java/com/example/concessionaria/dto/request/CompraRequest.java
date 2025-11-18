@@ -11,5 +11,5 @@ public record CompraRequest(
         Long clienteId,
 
         @NotNull(message = "O ID do vendedor é obrigatório")
-        Long vendedorId
+        Long funcionarioId
 ) {}
