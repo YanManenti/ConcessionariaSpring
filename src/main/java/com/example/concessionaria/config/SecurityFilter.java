@@ -34,8 +34,9 @@ public class SecurityFilter extends OncePerRequestFilter {
                 JWTUserData userData = optUser.get();
 
                 List<SimpleGrantedAuthority> authorities = userData.roles().stream()
-                        .map(SimpleGrantedAuthority::new)
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                         .toList();
+
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userData, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

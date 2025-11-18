@@ -18,9 +18,8 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
+    private String name;
     private Double salario;
-    @Column(name = "role_type")
     private Roles role;
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<User> users;

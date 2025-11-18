@@ -23,23 +23,24 @@ public class User implements UserDetails {
     private Long id;
 
     private String name;
-    private String cpf;
     private String telefone;
     private String email;
     private String endereco;
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Set<Roles> roles = Collections.singleton(Roles.CLIENTE);
+    private Set<Roles> roles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.name()))
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
                 .toList();
     }
+
 
     @Override
     public String getUsername() {

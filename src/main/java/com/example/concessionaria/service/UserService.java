@@ -4,16 +4,16 @@ import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -35,7 +35,6 @@ public class UserService {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setName(userDetails.getName());
-            user.setCpf(userDetails.getCpf());
             user.setEmail(userDetails.getEmail());
             user.setTelefone(userDetails.getTelefone());
             user.setEndereco(userDetails.getEndereco());
