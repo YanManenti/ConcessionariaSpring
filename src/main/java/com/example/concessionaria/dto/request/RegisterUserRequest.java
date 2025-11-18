@@ -1,6 +1,5 @@
 package com.example.concessionaria.dto.request;
 
-import com.example.concessionaria.model.Role;
 import com.example.concessionaria.model.Roles;
 import jakarta.validation.constraints.NotEmpty;
 

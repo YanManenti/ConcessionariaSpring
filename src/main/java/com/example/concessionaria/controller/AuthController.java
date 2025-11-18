@@ -5,7 +5,6 @@ import com.example.concessionaria.dto.request.LoginRequest;
 import com.example.concessionaria.dto.request.RegisterUserRequest;
 import com.example.concessionaria.dto.response.LoginResponse;
 import com.example.concessionaria.dto.response.RegisterUserResponse;
-import com.example.concessionaria.model.Role;
 import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.UserRepository;
