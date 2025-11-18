@@ -25,7 +25,7 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public UserDetails getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o email: " + email));
     }

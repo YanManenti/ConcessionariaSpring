@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final PedidoService pedidoService;
-    private final CompraService compraService;
+//    private final CompraService compraService;
 
     @GetMapping("/me")
     public ResponseEntity<User> getMyProfile(Authentication authentication) {
@@ -66,8 +66,9 @@ public class UserController {
         String email = userData.email();
         User comprador = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        Compra novaCompra = compraService.comprar(comprador.getId(), automovelId);
-        return ResponseEntity.ok(novaCompra);
+//        Compra novaCompra = compraService.comprar(comprador.getId(), automovelId);
+//        return ResponseEntity.ok(novaCompra);
+            return ResponseEntity.ok(new Pedido());
     }
 
     @PostMapping("/pedir/{automovelId}")

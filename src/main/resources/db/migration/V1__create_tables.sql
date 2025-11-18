@@ -25,7 +25,6 @@ CREATE TABLE users (
                        password VARCHAR(255) NOT NULL,
                        isActive BOOLEAN DEFAULT TRUE,
 
-    -- NOVO: Chave estrangeira para a tabela role
                        role_id BIGINT NOT NULL,
 
                        CONSTRAINT fk_user_roles FOREIGN KEY (role_id) REFERENCES roles(id)

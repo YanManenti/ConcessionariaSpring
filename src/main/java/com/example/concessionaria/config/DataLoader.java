@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class RoleDataLoader {
+public class DataLoader {
 
     private final RoleRepository roleRepository;
 
@@ -21,7 +21,7 @@ public class RoleDataLoader {
             "FINANCEIRO", "ESTOQUISTA", "MARKETING", "TI", "CLIENTE"
     );
 
-    public RoleDataLoader(RoleRepository roleRepository) {
+    public DataLoader(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 

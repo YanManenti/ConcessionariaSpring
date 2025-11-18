@@ -46,12 +46,21 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterUserResponseDTO> register(@Valid @RequestBody RegisterUserRequestDTO request) {
+        User user = new User();
+        try{
+            user = userService.getUserByEmail(request.email());
+        }catch (Exception e){
+            user = null;
+        }
+        if(user != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
+
         User newUser = new User();
         newUser.setPassword(passwordEncoder.encode(request.password()));
         newUser.setEmail(request.email());
         newUser.setName(request.name());
 
-        // Conjunto para armazenar as entidades Role
         String roleName;
         if (request.role() != null) {
             roleName = request.role();
@@ -59,13 +68,10 @@ public class AuthController {
             roleName = "CLIENTE";
         }
 
-        // 3. Buscar a entidade Role no banco de dados
         Role roleEntity = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Papel não encontrado: " + roleName)); // Ou use uma exceção mais específica
 
-        // 4. Adicionar a entidade Role ao novo usuário
         newUser.setRole(roleEntity);
-
         userService.saveUser(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponseDTO(newUser.getName(), newUser.getEmail()));

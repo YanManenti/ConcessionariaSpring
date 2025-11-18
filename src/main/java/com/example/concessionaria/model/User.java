@@ -23,13 +23,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Max(value = 50, message = "Nome deve ter no máximo 50 caracteres")
-    @Min(value = 3, message = "Nome deve ter no mínimo 3 caracteres")
-    @NotBlank
+    @Size(min = 3, max = 50, message = "Nome deve ter entre 3 e 50 caracteres")
+    @NotBlank(message = "Nome não pode ser vazio")
     private String name;
 
-    @Max(value = 15, message = "Telefone deve ter no máximo 15 caracteres")
-    @Min(value = 10, message = "Telefone deve ter no mínimo 10 caracteres")
+    @Size(min = 10, max = 15, message = "Telefone deve ter entre 10 e 15 caracteres")
     private String telefone;
 
     @NotBlank(message = "Email não pode ser vazio")
@@ -39,8 +37,8 @@ public class User implements UserDetails {
     @Size(max = 50)
     private String endereco;
 
-    @Max(value = 50, message = "Senha deve ter no máximo 50 caracteres")
-    @Min(value = 8, message = "Senha deve ter no mínimo 8 caracteres")
+    @Column(length = 255)
+    @NotBlank(message = "Senha não pode ser vazia")
     private String password;
 
     private boolean isActive = true;
