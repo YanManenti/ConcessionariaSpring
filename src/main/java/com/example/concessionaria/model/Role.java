@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,16 +13,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cliente {
+@Table(name = "roles")
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
-    private String cpf;
-    private String telefone;
-    private String email;
-    private String endereco;
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private List<Compra> pedidos = new ArrayList<>();
-
+    private String name;
+    private Double salario;
+    private Roles role;
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    private List<User> users;
 }
