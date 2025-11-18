@@ -20,5 +20,6 @@ public class Pedido {
     @OneToOne
     @JoinColumn(name = "automovel_id", referencedColumnName = "id")
     private Automovel automovel;
-    private LocalDateTime dataPedido;
+    private LocalDateTime dataInicio;
+
 }
