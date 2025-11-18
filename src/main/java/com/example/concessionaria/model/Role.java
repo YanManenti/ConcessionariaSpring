@@ -1,5 +1,6 @@
 package com.example.concessionaria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,7 +22,7 @@ public class Role {
     private Long id;
     private String name;
     private Double salario;
-    private Roles role;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private List<User> users;
+    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    private Set<User> users;
 }
