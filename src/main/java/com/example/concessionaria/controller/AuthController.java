@@ -1,15 +1,16 @@
 package com.example.concessionaria.controller;
 
 import com.example.concessionaria.config.TokenConfig;
-import com.example.concessionaria.dto.request.LoginRequest;
-import com.example.concessionaria.dto.request.RegisterUserRequest;
-import com.example.concessionaria.dto.response.LoginResponse;
-import com.example.concessionaria.dto.response.RegisterUserResponse;
+import com.example.concessionaria.dto.request.LoginRequestDTO;
+import com.example.concessionaria.dto.request.RegisterUserRequestDTO;
+import com.example.concessionaria.dto.response.LoginResponseDTO;
+import com.example.concessionaria.dto.response.RegisterUserResponseDTO;
 import com.example.concessionaria.model.Role;
-import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
-import com.example.concessionaria.repository.UserRepository;
+import com.example.concessionaria.repository.RoleRepository;
+import com.example.concessionaria.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,51 +22,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenConfig tokenConfig;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenConfig tokenConfig) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.tokenConfig = tokenConfig;
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
 
         UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(request.email(), request.password());
         Authentication authentication = authenticationManager.authenticate(userAndPass);
 
         User user = (User) authentication.getPrincipal();
         String token = tokenConfig.generateToken(user);
-        return ResponseEntity.ok(new LoginResponse(token));
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody RegisterUserRequest request) {
+    public ResponseEntity<RegisterUserResponseDTO> register(@Valid @RequestBody RegisterUserRequestDTO request) {
+        User user = new User();
+        try{
+            user = userService.getUserByEmail(request.email());
+        }catch (Exception e){
+            user = null;
+        }
+        if(user != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
+
         User newUser = new User();
         newUser.setPassword(passwordEncoder.encode(request.password()));
         newUser.setEmail(request.email());
         newUser.setName(request.name());
 
+        String roleName;
         if (request.role() != null) {
-            newUser.setRoles(Set.of(request.role()));
+            roleName = request.role();
         } else {
-            newUser.setRoles(Set.of(Roles.CLIENTE));
+            roleName = "CLIENTE";
         }
 
-        userRepository.save(newUser);
+        Role roleEntity = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Papel não encontrado: " + roleName)); // Ou use uma exceção mais específica
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponse(newUser.getName(), newUser.getEmail()));
+        newUser.setRole(roleEntity);
+        userService.saveUser(newUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponseDTO(newUser.getName(), newUser.getEmail()));
     }
 
 }

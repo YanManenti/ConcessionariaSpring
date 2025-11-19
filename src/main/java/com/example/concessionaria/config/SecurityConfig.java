@@ -1,6 +1,6 @@
 package com.example.concessionaria.config;
 
-import com.example.concessionaria.model.Roles;
+import com.example.concessionaria.service.RoleService; // Importe o serviço
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +14,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+@Component
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -27,8 +31,25 @@ public class SecurityConfig {
         this.securityFilter = securityFilter;
     }
 
+    String[] userAccess = {"ADMIN",
+                                        "DIRETOR",
+                                        "GERENTE_VENDAS",
+                                        "VENDEDOR",
+                                        "GERENTE_POS_VENDA",
+                                        "MECANICO",
+                                        "ATENDENTE_OFICINA",
+                                        "FINANCEIRO",
+                                        "ESTOQUISTA",
+                                        "MARKETING",
+                                        "TI",
+                                        "CLIENTE"};
+    String[] adminAccess = {"TI","ADMIN"};
+
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configure(http))
@@ -37,11 +58,10 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers("/admin/**").hasAnyRole("TI","ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole(adminAccess)
                         .requestMatchers("/users/**")
-                        .hasAnyRole(Arrays.stream(Roles.values())
-                                .map(Enum::name)
-                                .toArray(String[]::new))
+                        .hasAnyRole(userAccess)
+
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -58,13 +78,3 @@ public class SecurityConfig {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
