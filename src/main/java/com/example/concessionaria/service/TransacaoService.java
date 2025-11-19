@@ -3,8 +3,7 @@ package com.example.concessionaria.service;
 import com.example.concessionaria.dto.request.CompraRequest;
 import com.example.concessionaria.dto.request.PedidoRequest;
 import com.example.concessionaria.model.Automovel;
-import com.example.concessionaria.model.Compra;
-import com.example.concessionaria.model.Funcionario; // Importante
+import com.example.concessionaria.model.Compra; // Importante
 import com.example.concessionaria.model.Pedido;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.*;
@@ -22,7 +21,6 @@ public class TransacaoService {
     private final CompraRepository compraRepository;
     private final AutomovelRepository automovelRepository;
     private final UserRepository userRepository;
-    private final FuncionarioRepository funcionarioRepository; // Injeção obrigatória
 
     @Transactional
     public Pedido registrarPedido(PedidoRequest request) {
@@ -56,7 +54,7 @@ public class TransacaoService {
         User cliente = userRepository.findById(request.clienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
-        Funcionario funcionario = funcionarioRepository.findById(request.funcionarioId())
+        User funcionario = userRepository.findById(request.funcionarioId())
                 .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
 
         Compra compra = new Compra();

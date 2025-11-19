@@ -21,5 +21,5 @@ public class Cargo {
     private Double salario;
     private String nivelAcesso;
     @OneToMany(mappedBy = "cargo", cascade = CascadeType.ALL)
-    private List<Funcionario> funcionarios;
+    private List<User> funcionarios;
 }
