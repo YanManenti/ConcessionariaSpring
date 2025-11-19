@@ -20,7 +20,7 @@ public class Compra {
 
     @ManyToOne
     @JoinColumn(name = "funcionario_id", referencedColumnName = "id")
-    private Funcionario funcionario;
+    private User funcionario;
 
     private LocalDateTime dataInicio;
 
