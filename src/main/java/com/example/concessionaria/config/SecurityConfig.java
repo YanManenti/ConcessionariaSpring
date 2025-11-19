@@ -31,20 +31,11 @@ public class SecurityConfig {
         this.securityFilter = securityFilter;
     }
 
-    String[] userAccess = {"ADMIN",
-                                        "DIRETOR",
-                                        "GERENTE_VENDAS",
-                                        "VENDEDOR",
-                                        "GERENTE_POS_VENDA",
-                                        "MECANICO",
-                                        "ATENDENTE_OFICINA",
-                                        "FINANCEIRO",
-                                        "ESTOQUISTA",
-                                        "MARKETING",
-                                        "TI",
-                                        "CLIENTE"};
-    String[] adminAccess = {"TI","ADMIN"};
-
+    String[] adminAccess = {"ADMIN"};
+    String[] userAccess = {"ADMIN","DIRETOR","VENDEDOR","CLIENTE"};
+    String[] vendedorAccess = {"ADMIN","VENDEDOR"};
+    String[] diretorAccess = {"ADMIN","DIRETOR"};
+    String[] clienteAccess = {"ADMIN","CLIENTE"};
 
 
     @Bean
@@ -61,7 +52,9 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasAnyRole(adminAccess)
                         .requestMatchers("/users/**")
                         .hasAnyRole(userAccess)
-
+                        .requestMatchers("/users/diretores/**").hasAnyRole(diretorAccess)
+                        .requestMatchers("/users/vendedores/**").hasAnyRole(vendedorAccess)
+                        .requestMatchers("/users/clientes/**").hasAnyRole(clienteAccess)
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

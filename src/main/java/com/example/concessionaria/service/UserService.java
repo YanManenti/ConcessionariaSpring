@@ -75,4 +75,8 @@ public class UserService {
         return null;
     }
 
+    public List<User> getUsersByRoleName(String role) {
+        return userRepository.findByRoleName(role);
+    }
+
 }

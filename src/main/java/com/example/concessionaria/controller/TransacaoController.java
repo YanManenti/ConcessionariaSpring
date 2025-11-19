@@ -11,19 +11,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/transacao")
+@RequestMapping("/users/api/transacao")
 @RequiredArgsConstructor
 public class TransacaoController {
 
     private final TransacaoService transacaoService;
 
-    @PostMapping("/pedido")
+    @PostMapping("/clientes/pedido")
     public ResponseEntity<Pedido> criarPedido(@RequestBody @Valid PedidoRequest request) {
         Pedido novoPedido = transacaoService.registrarPedido(request);
         return ResponseEntity.ok(novoPedido);
     }
 
-    @PostMapping("/venda")
+    @PostMapping("/vendedores/venda")
     public ResponseEntity<Compra> realizarVenda(@RequestBody @Valid CompraRequest request) {
         Compra novaCompra = transacaoService.realizarVenda(request);
         return ResponseEntity.ok(novaCompra);

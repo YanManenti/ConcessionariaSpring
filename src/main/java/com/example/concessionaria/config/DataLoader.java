@@ -16,9 +16,10 @@ public class DataLoader {
 
     // A lista estática de papéis deve ser a mesma usada no SecurityConfig
     private final List<String> roleNames = Arrays.asList(
-            "ADMIN", "DIRETOR", "GERENTE_VENDAS", "VENDEDOR",
-            "GERENTE_POS_VENDA", "MECANICO", "ATENDENTE_OFICINA",
-            "FINANCEIRO", "ESTOQUISTA", "MARKETING", "TI", "CLIENTE"
+            "ADMIN",
+            "DIRETOR",
+            "VENDEDOR",
+            "CLIENTE"
     );
 
     public DataLoader(RoleRepository roleRepository) {

@@ -1,19 +1,22 @@
 package com.example.concessionaria.controller;
 
 import com.example.concessionaria.config.JWTUserData;
+import com.example.concessionaria.dto.request.CompraRequest;
+import com.example.concessionaria.dto.request.PatchRoleRequestDTO;
 import com.example.concessionaria.dto.request.UpdateUserRequestDTO;
+import com.example.concessionaria.dto.response.PatchRoleResponseDTO;
 import com.example.concessionaria.dto.response.UpdateUserResponseDTO;
-import com.example.concessionaria.model.Pedido;
-import com.example.concessionaria.model.User;
+import com.example.concessionaria.model.*;
 import com.example.concessionaria.repository.UserRepository;
-import com.example.concessionaria.service.PedidoService;
-import com.example.concessionaria.service.UserService;
+import com.example.concessionaria.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static java.util.Locale.filter;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +26,11 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final PedidoService pedidoService;
-//    private final CompraService compraService;
+    private final RoleService roleService;
+    private final TransacaoService transacaoService;
+    private final AutomovelService automovelService;
 
-    @GetMapping("/me")
+    @GetMapping("/eu")
     public ResponseEntity<User> getMyProfile(Authentication authentication) {
         JWTUserData userData = (JWTUserData) authentication.getPrincipal();
         String email = userData.email();
@@ -34,7 +39,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/me")
+    @PutMapping("/eu")
     public ResponseEntity<UpdateUserResponseDTO> updateMyProfile(Authentication authentication, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
         JWTUserData userData = (JWTUserData) authentication.getPrincipal();
         String email = userData.email();
@@ -60,17 +65,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/comprar/{automovelId}")
-    public ResponseEntity<Pedido> comprarAutomovel(Authentication authentication, @PathVariable Long automovelId) {
-        JWTUserData userData = (JWTUserData) authentication.getPrincipal();
-        String email = userData.email();
-        User comprador = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-//        Compra novaCompra = compraService.comprar(comprador.getId(), automovelId);
-//        return ResponseEntity.ok(novaCompra);
-            return ResponseEntity.ok(new Pedido());
-    }
-
     @PostMapping("/pedir/{automovelId}")
     public ResponseEntity<Pedido> pedirAutomovel(Authentication authentication, @PathVariable Long automovelId) {
         JWTUserData userData = (JWTUserData) authentication.getPrincipal();
@@ -90,4 +84,39 @@ public class UserController {
         List<Pedido> pedidos = pedidoService.listarPorUsuario(usuario.getId());
         return ResponseEntity.ok(pedidos);
     }
+
+    @GetMapping("/diretores/funcionarios")
+    public ResponseEntity<List<User>> listarFuncionarios() {
+        List<User> funcionarios = userService.getAllUsers().stream()
+                .filter(user -> !user.getRole().getName().equals(String.valueOf(Roles.CLIENTE)))
+                .toList();
+        return ResponseEntity.ok(funcionarios);
+    }
+
+    @GetMapping("/diretores/clientes")
+    public ResponseEntity<List<User>> listarClientes() {
+        List<User> clientes = userService.getUsersByRoleName(String.valueOf(Roles.CLIENTE));
+        return ResponseEntity.ok(clientes);
+    }
+
+    @PatchMapping("/diretores/editar/cargo/{cargoId}")
+    public ResponseEntity<PatchRoleResponseDTO> alterarCargo(@RequestParam Long cargoId, @RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
+        Role currentRole = roleService.findById(cargoId).orElseThrow(() -> new RuntimeException("Role not found"));
+        String newName = patchRoleRequestDTO.name();
+        Double newSalario = patchRoleRequestDTO.salario();
+        if(newName != null) currentRole.setName(newName);
+        if(newSalario != null) currentRole.setSalario(newSalario);
+        roleService.save(currentRole);
+        return ResponseEntity.ok(new PatchRoleResponseDTO(
+                currentRole.getName(),
+                currentRole.getSalario()
+        ));
+    }
+
+    @DeleteMapping("/diretores/deletar/cargo/{cargoId}")
+    public ResponseEntity<String> deletarCargo(@PathVariable Long cargoId) {
+        roleService.deleteById(cargoId);
+        return ResponseEntity.ok("Cargo deletado com sucesso.");
+    }
+
 }
