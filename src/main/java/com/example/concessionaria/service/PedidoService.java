@@ -25,7 +25,7 @@ public class PedidoService {
         Pedido novoPedido = new Pedido();
          novoPedido.setCliente(userService.getUserById(usuarioId));
 //         novoPedido.setAutomovel(automovelService.getAutomovelById(automovelId));
-         novoPedido.setDataInicio(LocalDateTime.now());
+         novoPedido.setDataPedido(LocalDateTime.now());
         return pedidoRepository.save(novoPedido);
     }
 }
