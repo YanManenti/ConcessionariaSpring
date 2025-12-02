@@ -1,7 +1,8 @@
 package com.example.concessionaria.controller;
 
-import com.example.concessionaria.dto.request.NewAutomovelRequest;
-import com.example.concessionaria.dto.response.NewAutomovelResponse;
+import com.example.concessionaria.dto.request.NewAutomovelRequestDTO;
+import com.example.concessionaria.dto.response.AutomovelResponseDTO;
+import com.example.concessionaria.dto.response.NewAutomovelResponseDTO;
 import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.service.AutomovelService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +24,22 @@ public class AutomovelController {
     private AutomovelService automovelService;
 
     @GetMapping
-    public ResponseEntity<List<Automovel>> listarTodos() {
+    public ResponseEntity<List<AutomovelResponseDTO>> listarTodos() {
         List<Automovel> automoveis = automovelService.listarTodos();
-        return ResponseEntity.ok(automoveis);
+        List<AutomovelResponseDTO> response = new ArrayList<>();
+        automoveis.forEach(automovel -> {
+            response.add(new AutomovelResponseDTO(
+                    automovel.getNome(),
+                    automovel.getModelo(),
+                    automovel.getMarca(),
+                    automovel.getAno(),
+                    automovel.getCor(),
+                    automovel.getPlaca(),
+                    automovel.getPreco(),
+                    automovel.isDisponivel()
+            ));
+        });
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -35,7 +50,7 @@ public class AutomovelController {
     }
 
     @PostMapping("/admin/")
-    public ResponseEntity<NewAutomovelResponse> criar(@Valid @RequestBody NewAutomovelRequest automovelRequest) {
+    public ResponseEntity<NewAutomovelResponseDTO> criar(@Valid @RequestBody NewAutomovelRequestDTO automovelRequest) {
         Automovel automovel = new Automovel();
         automovel.setNome(automovelRequest.nome());
         automovel.setModelo(automovelRequest.modelo());
@@ -46,8 +61,10 @@ public class AutomovelController {
         automovel.setPreco(automovelRequest.preco());
         automovel.setDisponivel(automovelRequest.disponivel());
 
+        automovelService.salvar(automovel);
+
         // Literalmente os mesmos campos
-        NewAutomovelResponse response = new NewAutomovelResponse(
+        NewAutomovelResponseDTO response = new NewAutomovelResponseDTO(
                 automovel.getNome(),
                 automovel.getModelo(),
                 automovel.getMarca(),

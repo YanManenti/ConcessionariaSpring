@@ -6,6 +6,7 @@ import com.example.concessionaria.dto.request.RegisterUserRequestDTO;
 import com.example.concessionaria.dto.response.LoginResponseDTO;
 import com.example.concessionaria.dto.response.RegisterUserResponseDTO;
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.RoleRepository;
 import com.example.concessionaria.service.UserService;
@@ -61,11 +62,11 @@ public class AuthController {
         newUser.setEmail(request.email());
         newUser.setName(request.name());
 
-        String roleName;
+        Roles roleName;
         if (request.role() != null) {
             roleName = request.role();
         } else {
-            roleName = "CLIENTE";
+            roleName = Roles.CLIENTE;
         }
 
         Role roleEntity = roleRepository.findByName(roleName)

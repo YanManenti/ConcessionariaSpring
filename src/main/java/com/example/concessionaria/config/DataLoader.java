@@ -2,6 +2,7 @@ package com.example.concessionaria.config;
 
 import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.AutomovelRepository;
 import com.example.concessionaria.repository.RoleRepository;
@@ -22,7 +23,7 @@ public class DataLoader {
     private final AutomovelRepository automovelRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private final List<String> roleNames = Arrays.asList("ADMIN", "DIRETOR", "VENDEDOR", "CLIENTE");
+    private final List<Roles> roleNames = Arrays.asList(Roles.values());
 
     public DataLoader(RoleRepository roleRepository,
                       UserRepository userRepository,
@@ -41,7 +42,7 @@ public class DataLoader {
             System.out.println("Iniciando carga de Roles, Users e Automóveis...");
 
             // --- Criar Roles ---
-            for (String roleName : roleNames) {
+            for (Roles roleName : roleNames) {
                 if (roleRepository.findByName(roleName).isEmpty()) {
                     Role newRole = new Role();
                     newRole.setName(roleName);
@@ -52,7 +53,7 @@ public class DataLoader {
             }
 
             // --- Criar um usuário por Role ---
-            for (String roleName : roleNames) {
+            for (Roles roleName : roleNames) {
 
                 Role role = roleRepository.findByName(roleName).orElseThrow();
 

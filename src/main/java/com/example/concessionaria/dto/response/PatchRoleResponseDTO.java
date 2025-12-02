@@ -1,7 +1,9 @@
 package com.example.concessionaria.dto.response;
 
+import com.example.concessionaria.model.Roles;
+
 public record PatchRoleResponseDTO(
-    String name,
+    Roles name,
     Double salario
 ) {
 }

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record NewAutomovelRequest(
+public record NewAutomovelRequestDTO(
         @Size(min=3, max=50, message = "O nome deve ter entre 3 e 50 caracteres")
         @NotNull(message = "O nome não pode ser nulo")
         String nome,

@@ -1,7 +1,6 @@
 package com.example.concessionaria.controller;
 
 import com.example.concessionaria.config.JWTUserData;
-import com.example.concessionaria.dto.request.CompraRequest;
 import com.example.concessionaria.dto.request.PatchRoleRequestDTO;
 import com.example.concessionaria.dto.request.UpdateUserRequestDTO;
 import com.example.concessionaria.dto.response.PatchRoleResponseDTO;
@@ -39,7 +38,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/eu")
+    @PatchMapping("/eu")
     public ResponseEntity<UpdateUserResponseDTO> updateMyProfile(Authentication authentication, @RequestBody UpdateUserRequestDTO updateUserRequestDTO) {
         JWTUserData userData = (JWTUserData) authentication.getPrincipal();
         String email = userData.email();
@@ -88,14 +87,14 @@ public class UserController {
     @GetMapping("/diretores/funcionarios")
     public ResponseEntity<List<User>> listarFuncionarios() {
         List<User> funcionarios = userService.getAllUsers().stream()
-                .filter(user -> user.getRole().getName().equals(String.valueOf(Roles.VENDEDOR)))
+                .filter(user -> user.getRole().getName().name().equals(String.valueOf(Roles.VENDEDOR)))
                 .toList();
         return ResponseEntity.ok(funcionarios);
     }
 
     @GetMapping("/diretores/clientes")
     public ResponseEntity<List<User>> listarClientes() {
-        List<User> clientes = userService.getUsersByRoleName(String.valueOf(Roles.CLIENTE));
+        List<User> clientes = userService.getUsersByRoleName(Roles.CLIENTE);
         return ResponseEntity.ok(clientes);
     }
 
@@ -120,11 +119,11 @@ public class UserController {
 
     // Problemas com o ENUM Roles ao criar, deletar e editar cargos???
     @PatchMapping("/diretores/editar/cargo/{cargoId}")
-    public ResponseEntity<PatchRoleResponseDTO> alterarCargo(@RequestParam Long cargoId, @RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
+    public ResponseEntity<PatchRoleResponseDTO> atualizarCargo(@PathVariable Long cargoId, @RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
         Role currentRole = roleService.findById(cargoId).orElseThrow(() -> new RuntimeException("Role not found"));
-        String newName = patchRoleRequestDTO.name();
+//        Roles newName = patchRoleRequestDTO.name();
         Double newSalario = patchRoleRequestDTO.salario();
-        if(newName != null) currentRole.setName(newName);
+//        if(newName != null) currentRole.setName(newName);
         if(newSalario != null) currentRole.setSalario(newSalario);
         roleService.save(currentRole);
         return ResponseEntity.ok(new PatchRoleResponseDTO(
@@ -133,23 +132,23 @@ public class UserController {
         ));
     }
 
-    @PostMapping("/diretores/criar/cargo")
-    public ResponseEntity<PatchRoleResponseDTO> criarCargo(@RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
-        Role newRole = new Role();
-        newRole.setName(patchRoleRequestDTO.name());
-        newRole.setSalario(patchRoleRequestDTO.salario());
-        roleService.save(newRole);
-        return ResponseEntity.ok(new PatchRoleResponseDTO(
-                newRole.getName(),
-                newRole.getSalario()
-        ));
-    }
-
-    @DeleteMapping("/diretores/deletar/cargo/{cargoId}")
-    public ResponseEntity<String> deletarCargo(@PathVariable Long cargoId) {
-        roleService.deleteById(cargoId);
-        return ResponseEntity.ok("Cargo deletado com sucesso.");
-    }
+//    @PostMapping("/diretores/criar/cargo")
+//    public ResponseEntity<PatchRoleResponseDTO> criarCargo(@RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
+//        Role newRole = new Role();
+//        newRole.setName(patchRoleRequestDTO.name());
+//        newRole.setSalario(patchRoleRequestDTO.salario());
+//        roleService.save(newRole);
+//        return ResponseEntity.ok(new PatchRoleResponseDTO(
+//                newRole.getName(),
+//                newRole.getSalario()
+//        ));
+//    }
+//
+//    @DeleteMapping("/diretores/deletar/cargo/{cargoId}")
+//    public ResponseEntity<String> deletarCargo(@PathVariable Long cargoId) {
+//        roleService.deleteById(cargoId);
+//        return ResponseEntity.ok("Cargo deletado com sucesso.");
+//    }
 
 
 

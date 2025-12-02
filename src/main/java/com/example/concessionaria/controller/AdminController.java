@@ -30,11 +30,11 @@ public class AdminController {
     }
 
     @PatchMapping("/users/{id}/role")
-    public ResponseEntity<Void> changeUserRole(@PathVariable Long id, @RequestParam String newRole) {
+    public ResponseEntity<Void> changeUserRole(@PathVariable Long id, @RequestParam Roles newRole) {
         if (newRole == null) {
-            newRole = "CLIENTE";
+            newRole = Roles.CLIENTE;
         }
-        String finalNewRole = newRole;
+        Roles finalNewRole = newRole;
         Role roleEntity = roleService.findByName(newRole)
                 .orElseThrow(() -> new RuntimeException("Papel não encontrado: " + finalNewRole));
         userService.alterRole(id, roleEntity);

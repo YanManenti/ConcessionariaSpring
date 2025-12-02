@@ -1,7 +1,7 @@
 package com.example.concessionaria.service;
 
-import com.example.concessionaria.dto.request.CompraRequest;
-import com.example.concessionaria.dto.request.PedidoRequest;
+import com.example.concessionaria.dto.request.CompraRequestDTO;
+import com.example.concessionaria.dto.request.PedidoRequestDTO;
 import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.model.Compra; // Importante
 import com.example.concessionaria.model.Pedido;
@@ -24,7 +24,7 @@ public class TransacaoService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Pedido registrarPedido(PedidoRequest request) {
+    public Pedido registrarPedido(PedidoRequestDTO request) {
         Automovel automovel = automovelRepository.findById(request.automovelId())
                 .orElseThrow(() -> new RuntimeException("Automóvel não encontrado."));
 
@@ -44,7 +44,7 @@ public class TransacaoService {
     }
 
     @Transactional
-    public Compra realizarVenda(CompraRequest request) {
+    public Compra realizarVenda(CompraRequestDTO request) {
         Automovel automovel = automovelRepository.findById(request.automovelId())
                 .orElseThrow(() -> new RuntimeException("Automóvel não encontrado."));
 
@@ -62,7 +62,7 @@ public class TransacaoService {
         compra.setCliente(cliente);
         compra.setAutomovel(automovel);
 
-        compra.setFuncionario(funcionario);
+        compra.setVendedor(funcionario);
 
         compra.setDataCompra(LocalDateTime.now());
 

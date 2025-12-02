@@ -2,7 +2,7 @@ package com.example.concessionaria.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public record PedidoRequest(
+public record PedidoRequestDTO(
 
         @NotNull(message = "O ID do cliente é obrigatório")
         Long clienteId,

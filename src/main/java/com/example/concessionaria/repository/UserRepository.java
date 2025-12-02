@@ -1,6 +1,7 @@
 package com.example.concessionaria.repository;
 
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByEmail(String username);
-    List<User> findByRoleName(String roleName);
+    List<User> findByRoleName(Roles roleName);
 
     boolean existsByRole(Role role);
 }
