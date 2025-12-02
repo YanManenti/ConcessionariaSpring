@@ -88,7 +88,7 @@ public class UserController {
     @GetMapping("/diretores/funcionarios")
     public ResponseEntity<List<User>> listarFuncionarios() {
         List<User> funcionarios = userService.getAllUsers().stream()
-                .filter(user -> !user.getRole().getName().equals(String.valueOf(Roles.CLIENTE)))
+                .filter(user -> user.getRole().getName().equals(String.valueOf(Roles.VENDEDOR)))
                 .toList();
         return ResponseEntity.ok(funcionarios);
     }
@@ -99,6 +99,26 @@ public class UserController {
         return ResponseEntity.ok(clientes);
     }
 
+    @GetMapping("/diretores/cargos")
+    public ResponseEntity<List<String>> listarCargos() {
+        List<String> cargos = roleService.findAllRoleNames();
+        return ResponseEntity.ok(cargos);
+    }
+
+    @GetMapping("/diretores/vendas")
+    public ResponseEntity<List<Compra>> listarVendas() {
+        List<Compra> vendas = transacaoService.listarCompras();
+        return ResponseEntity.ok(vendas);
+    }
+
+    @GetMapping("/diretores/vendas/{clienteId}")
+    public ResponseEntity<List<Compra>> listarVendasPorCliente(@PathVariable Long clienteId) {
+        List<Compra> vendas = transacaoService.listarComprasPorCliente(clienteId);
+        return ResponseEntity.ok(vendas);
+    }
+
+
+    // Problemas com o ENUM Roles ao criar, deletar e editar cargos???
     @PatchMapping("/diretores/editar/cargo/{cargoId}")
     public ResponseEntity<PatchRoleResponseDTO> alterarCargo(@RequestParam Long cargoId, @RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
         Role currentRole = roleService.findById(cargoId).orElseThrow(() -> new RuntimeException("Role not found"));
@@ -113,10 +133,24 @@ public class UserController {
         ));
     }
 
+    @PostMapping("/diretores/criar/cargo")
+    public ResponseEntity<PatchRoleResponseDTO> criarCargo(@RequestBody PatchRoleRequestDTO patchRoleRequestDTO) {
+        Role newRole = new Role();
+        newRole.setName(patchRoleRequestDTO.name());
+        newRole.setSalario(patchRoleRequestDTO.salario());
+        roleService.save(newRole);
+        return ResponseEntity.ok(new PatchRoleResponseDTO(
+                newRole.getName(),
+                newRole.getSalario()
+        ));
+    }
+
     @DeleteMapping("/diretores/deletar/cargo/{cargoId}")
     public ResponseEntity<String> deletarCargo(@PathVariable Long cargoId) {
         roleService.deleteById(cargoId);
         return ResponseEntity.ok("Cargo deletado com sucesso.");
     }
+
+
 
 }

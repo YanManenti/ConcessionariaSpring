@@ -24,4 +24,6 @@ public interface AutomovelRepository extends JpaRepository<Automovel, Long> {
     Automovel findByPlaca(String placa);
 
     List<Automovel> findByCorContainingIgnoreCase(String cor);
+
+    boolean existsByPlaca(String placa);
 }

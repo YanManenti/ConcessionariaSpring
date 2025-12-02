@@ -1,10 +1,15 @@
 package com.example.concessionaria.config;
 
+import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.User;
+import com.example.concessionaria.repository.AutomovelRepository;
 import com.example.concessionaria.repository.RoleRepository;
+import com.example.concessionaria.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,40 +18,76 @@ import java.util.List;
 public class DataLoader {
 
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final AutomovelRepository automovelRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    // A lista estática de papéis deve ser a mesma usada no SecurityConfig
-    private final List<String> roleNames = Arrays.asList(
-            "ADMIN",
-            "DIRETOR",
-            "VENDEDOR",
-            "CLIENTE"
-    );
+    private final List<String> roleNames = Arrays.asList("ADMIN", "DIRETOR", "VENDEDOR", "CLIENTE");
 
-    public DataLoader(RoleRepository roleRepository) {
+    public DataLoader(RoleRepository roleRepository,
+                      UserRepository userRepository,
+                      AutomovelRepository automovelRepository,
+                      PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.automovelRepository = automovelRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
-    public CommandLineRunner initRoles() {
+    public CommandLineRunner initData() {
         return args -> {
-            System.out.println("Iniciando verificação e inserção de papéis (Roles)...");
 
+            System.out.println("Iniciando carga de Roles, Users e Automóveis...");
+
+            // --- Criar Roles ---
             for (String roleName : roleNames) {
-                // Tenta encontrar o papel pelo nome
                 if (roleRepository.findByName(roleName).isEmpty()) {
-
-                    // Se não existir, cria e salva a nova entidade Role
                     Role newRole = new Role();
                     newRole.setName(roleName);
-
-                    // Exemplo: Salário padrão de 0.0 para todos, ajuste conforme necessário
                     newRole.setSalario(0.0);
-
                     roleRepository.save(newRole);
                     System.out.println("Role inserida: " + roleName);
                 }
             }
-            System.out.println("Verificação e inserção de papéis concluída.");
+
+            // --- Criar um usuário por Role ---
+            for (String roleName : roleNames) {
+
+                Role role = roleRepository.findByName(roleName).orElseThrow();
+
+                if (!userRepository.existsByRole(role)) {
+
+                    User user = new User();
+                    user.setName(roleName.toLowerCase() + "_default");
+                    user.setEmail(roleName.toLowerCase() + "@example.com");
+                    user.setTelefone("11999999999");
+                    user.setEndereco("Endereço padrão");
+                    user.setPassword(passwordEncoder.encode("123456"));
+                    user.setRole(role);
+
+                    userRepository.save(user);
+
+                    System.out.println("Usuário criado para role: " + roleName);
+                }
+            }
+
+            // --- Criar automóveis padrões ---
+            List<Automovel> carrosIniciais = List.of(
+                    new Automovel(null, "Civic 2.0", "EXL", "Honda", 2020, "Prata", "ABC1A23", 115000, true, null),
+                    new Automovel(null, "Corolla 1.8", "GLI", "Toyota", 2019, "Preto", "DEF4B56", 105000, true, null),
+                    new Automovel(null, "Onix 1.0", "LTZ", "Chevrolet", 2021, "Branco", "GHI7C89", 75000, true, null),
+                    new Automovel(null, "HB20 1.6", "Comfort Plus", "Hyundai", 2018, "Azul", "JKL0D12", 62000, true, null)
+            );
+
+            for (Automovel auto : carrosIniciais) {
+                if (!automovelRepository.existsByPlaca(auto.getPlaca())) {
+                    automovelRepository.save(auto);
+                    System.out.println("Automóvel inserido: " + auto.getModelo() + " - Placa " + auto.getPlaca());
+                }
+            }
+
+            System.out.println("Carga inicial concluída.");
         };
     }
 }

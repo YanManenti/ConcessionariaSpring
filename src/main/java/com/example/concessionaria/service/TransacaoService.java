@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -69,5 +70,17 @@ public class TransacaoService {
         automovelRepository.save(automovel);
 
         return compraRepository.save(compra);
+    }
+
+    public List<Compra> listarCompras(){
+        return compraRepository.findAll();
+    }
+
+    public List<Pedido> listarPedidos(){
+        return pedidoRepository.findAll();
+    }
+
+    public List<Compra> listarComprasPorCliente(Long clienteId){
+        return compraRepository.findByClienteId(clienteId);
     }
 }
