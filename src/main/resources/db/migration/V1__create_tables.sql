@@ -8,7 +8,7 @@
 -- ---------------------------
 CREATE TABLE roles (
                        id BIGSERIAL PRIMARY KEY,
-                       name VARCHAR(50) UNIQUE NOT NULL,
+                       name SMALLINT UNIQUE NOT NULL,
                        salario DOUBLE PRECISION,
                        CONSTRAINT uk_roles_name UNIQUE (name)
 );
@@ -48,7 +48,7 @@ CREATE TABLE automovel (
 -- =======================
 -- Tabela de pedidos
 -- =======================
-CREATE TABLE pedido (
+CREATE TABLE pedidos (
                         id BIGSERIAL PRIMARY KEY,
                         cliente_id BIGINT NOT NULL,
                         automovel_id BIGINT NOT NULL,

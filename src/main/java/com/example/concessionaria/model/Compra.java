@@ -19,8 +19,8 @@ public class Compra {
     private Automovel automovel;
 
     @ManyToOne
-    @JoinColumn(name = "funcionario_id", referencedColumnName = "id")
-    private User funcionario;
+    @JoinColumn(name = "vendedor_id", referencedColumnName = "id")
+    private User vendedor;
 
     private LocalDateTime dataInicio;
 

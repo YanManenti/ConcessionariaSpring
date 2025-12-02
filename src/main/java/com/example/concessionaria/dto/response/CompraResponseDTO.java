@@ -1,8 +1,8 @@
-package com.example.concessionaria.dto.request;
+package com.example.concessionaria.dto.response;
 
 import jakarta.validation.constraints.NotNull;
 
-public record CompraRequest(
+public record CompraResponseDTO(
 
         @NotNull(message = "O ID do automóvel é obrigatório")
         Long automovelId,
@@ -12,4 +12,5 @@ public record CompraRequest(
 
         @NotNull(message = "O ID do vendedor é obrigatório")
         Long funcionarioId
-) {}
+) {
+}

@@ -1,5 +1,8 @@
 package com.example.concessionaria.controller;
 
+import com.example.concessionaria.dto.request.NewAutomovelRequestDTO;
+import com.example.concessionaria.dto.response.AutomovelResponseDTO;
+import com.example.concessionaria.dto.response.NewAutomovelResponseDTO;
 import com.example.concessionaria.model.Automovel;
 import com.example.concessionaria.service.AutomovelService;
 import jakarta.validation.Valid;
@@ -8,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +24,22 @@ public class AutomovelController {
     private AutomovelService automovelService;
 
     @GetMapping
-    public ResponseEntity<List<Automovel>> listarTodos() {
+    public ResponseEntity<List<AutomovelResponseDTO>> listarTodos() {
         List<Automovel> automoveis = automovelService.listarTodos();
-        return ResponseEntity.ok(automoveis);
+        List<AutomovelResponseDTO> response = new ArrayList<>();
+        automoveis.forEach(automovel -> {
+            response.add(new AutomovelResponseDTO(
+                    automovel.getNome(),
+                    automovel.getModelo(),
+                    automovel.getMarca(),
+                    automovel.getAno(),
+                    automovel.getCor(),
+                    automovel.getPlaca(),
+                    automovel.getPreco(),
+                    automovel.isDisponivel()
+            ));
+        });
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -32,13 +49,36 @@ public class AutomovelController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Automovel> criar(@Valid @RequestBody Automovel automovel) {
-        Automovel novoAutomovel = automovelService.salvar(automovel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoAutomovel);
+    @PostMapping("/admin/")
+    public ResponseEntity<NewAutomovelResponseDTO> criar(@Valid @RequestBody NewAutomovelRequestDTO automovelRequest) {
+        Automovel automovel = new Automovel();
+        automovel.setNome(automovelRequest.nome());
+        automovel.setModelo(automovelRequest.modelo());
+        automovel.setMarca(automovelRequest.marca());
+        automovel.setAno(automovelRequest.ano());
+        automovel.setCor(automovelRequest.cor());
+        automovel.setPlaca(automovelRequest.placa());
+        automovel.setPreco(automovelRequest.preco());
+        automovel.setDisponivel(automovelRequest.disponivel());
+
+        automovelService.salvar(automovel);
+
+        // Literalmente os mesmos campos
+        NewAutomovelResponseDTO response = new NewAutomovelResponseDTO(
+                automovel.getNome(),
+                automovel.getModelo(),
+                automovel.getMarca(),
+                automovel.getAno(),
+                automovel.getCor(),
+                automovel.getPlaca(),
+                automovel.getPreco(),
+                automovel.isDisponivel()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<Automovel> atualizar(@PathVariable Long id, @Valid @RequestBody Automovel automovel) {
         Optional<Automovel> automovelExistente = automovelService.buscarPorId(id);
 
@@ -51,7 +91,7 @@ public class AutomovelController {
         return ResponseEntity.ok(automovelAtualizado);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         Optional<Automovel> automovel = automovelService.buscarPorId(id);
 
@@ -118,7 +158,7 @@ public class AutomovelController {
         return ResponseEntity.ok(automoveis);
     }
 
-    @PatchMapping("/{id}/marcar-vendido")
+    @PatchMapping("/admin/{id}/marcar-vendido")
     public ResponseEntity<Automovel> marcarComoVendido(@PathVariable Long id) {
         Automovel automovel = automovelService.marcarComoVendido(id);
 
@@ -129,7 +169,7 @@ public class AutomovelController {
         return ResponseEntity.ok(automovel);
     }
 
-    @PatchMapping("/{id}/marcar-disponivel")
+    @PatchMapping("/admin/{id}/marcar-disponivel")
     public ResponseEntity<Automovel> marcarComoDisponivel(@PathVariable Long id) {
         Automovel automovel = automovelService.marcarComoDisponivel(id);
 
@@ -140,7 +180,7 @@ public class AutomovelController {
         return ResponseEntity.ok(automovel);
     }
 
-    @PatchMapping("/{id}/preco")
+    @PatchMapping("/admin/{id}/preco")
     public ResponseEntity<Automovel> atualizarPreco(
             @PathVariable Long id,
             @RequestParam double novoPreco) {

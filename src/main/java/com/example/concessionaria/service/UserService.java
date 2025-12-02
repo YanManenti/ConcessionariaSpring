@@ -1,6 +1,7 @@
 package com.example.concessionaria.service;
 
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.model.User;
 import com.example.concessionaria.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -73,6 +74,10 @@ public class UserService {
             return userRepository.save(user);
         }
         return null;
+    }
+
+    public List<User> getUsersByRoleName(Roles role) {
+        return userRepository.findByRoleName(role);
     }
 
 }

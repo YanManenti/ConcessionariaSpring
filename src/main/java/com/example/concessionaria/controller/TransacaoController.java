@@ -1,7 +1,9 @@
 package com.example.concessionaria.controller;
 
-import com.example.concessionaria.dto.request.CompraRequest;
-import com.example.concessionaria.dto.request.PedidoRequest;
+import com.example.concessionaria.dto.request.CompraRequestDTO;
+import com.example.concessionaria.dto.request.PedidoRequestDTO;
+import com.example.concessionaria.dto.response.CompraResponseDTO;
+import com.example.concessionaria.dto.response.PedidoResponseDTO;
 import com.example.concessionaria.model.Compra;
 import com.example.concessionaria.model.Pedido;
 import com.example.concessionaria.service.TransacaoService;
@@ -17,15 +19,24 @@ public class TransacaoController {
 
     private final TransacaoService transacaoService;
 
-    @PostMapping("/pedido")
-    public ResponseEntity<Pedido> criarPedido(@RequestBody @Valid PedidoRequest request) {
+    @PostMapping("/users/clientes/pedido")
+    public ResponseEntity<PedidoResponseDTO> criarPedido(@RequestBody @Valid PedidoRequestDTO request) {
         Pedido novoPedido = transacaoService.registrarPedido(request);
-        return ResponseEntity.ok(novoPedido);
+        PedidoResponseDTO response = new PedidoResponseDTO(
+                novoPedido.getCliente().getId(),
+                novoPedido.getAutomovel().getId()
+        );
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/venda")
-    public ResponseEntity<Compra> realizarVenda(@RequestBody @Valid CompraRequest request) {
+    @PostMapping("/users/vendedores/venda")
+    public ResponseEntity<CompraResponseDTO> realizarVenda(@RequestBody @Valid CompraRequestDTO request) {
         Compra novaCompra = transacaoService.realizarVenda(request);
-        return ResponseEntity.ok(novaCompra);
+        CompraResponseDTO response = new CompraResponseDTO(
+                novaCompra.getCliente().getId(),
+                novaCompra.getVendedor().getId(),
+                novaCompra.getAutomovel().getId()
+        );
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.concessionaria.service;
 
 import com.example.concessionaria.model.Role;
+import com.example.concessionaria.model.Roles;
 import com.example.concessionaria.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,20 @@ public class RoleService {
         return roleRepository.findAllRoleNames();
     }
 
-    public Optional<Role> findByName(String roleName) {
+    public Optional<Role> findByName(Roles roleName) {
         return roleRepository.findByName(roleName);
+    }
+
+    public Optional<Role> findById(Long roleId) {
+        return roleRepository.findById(roleId);
+    }
+
+    public Role save(Role newRole) {
+        return roleRepository.save(newRole);
+    }
+
+    public Long deleteById(Long id) {
+        roleRepository.deleteById(id);
+        return id;
     }
 }

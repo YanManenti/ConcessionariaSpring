@@ -1,5 +1,6 @@
 package com.example.concessionaria.dto.request;
 
+import com.example.concessionaria.model.Roles;
 import jakarta.validation.constraints.*;
 
 public record RegisterUserRequestDTO(
@@ -16,6 +17,6 @@ public record RegisterUserRequestDTO(
         @NotBlank(message = "Senha não pode ser vazia")
         String password,
 
-        String role
+        Roles role
 ) {
 }

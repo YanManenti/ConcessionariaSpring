@@ -21,7 +21,7 @@ public class TokenConfig {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.create()
                 .withClaim("userId", user.getId())
-                .withClaim("roles", List.of(user.getRole().getName()))
+                .withClaim("roles", List.of(user.getRole().getName().name()))
                 .withSubject(user.getEmail())
                 .withExpiresAt(Instant.now().plusSeconds(86400))
                 .withIssuedAt(Instant.now())
