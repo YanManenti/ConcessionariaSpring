@@ -35,10 +35,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
-    }
-
     public User alterRole(Long id, Role newRole) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {

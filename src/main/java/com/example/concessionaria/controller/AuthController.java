@@ -41,8 +41,12 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(userAndPass);
 
         User user = (User) authentication.getPrincipal();
-        String token = tokenConfig.generateToken(user);
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        if(user.isAccountNonExpired() && user.isAccountNonLocked() && user.isCredentialsNonExpired() && user.isEnabled() && user.isActive()) {
+            String token = tokenConfig.generateToken(user);
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 
     @PostMapping("/register")
