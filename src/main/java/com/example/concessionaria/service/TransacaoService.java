@@ -44,7 +44,7 @@ public class TransacaoService {
     }
 
     @Transactional
-    public Compra realizarVenda(CompraRequestDTO request) {
+    public Compra realizarVenda(User user, CompraRequestDTO request) {
         Automovel automovel = automovelRepository.findById(request.automovelId())
                 .orElseThrow(() -> new RuntimeException("Automóvel não encontrado."));
 
@@ -55,14 +55,11 @@ public class TransacaoService {
         User cliente = userRepository.findById(request.clienteId())
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
-        User funcionario = userRepository.findById(request.funcionarioId())
-                .orElseThrow(() -> new RuntimeException("Funcionário não encontrado."));
-
         Compra compra = new Compra();
         compra.setCliente(cliente);
         compra.setAutomovel(automovel);
 
-        compra.setVendedor(funcionario);
+        compra.setVendedor(user);
 
         compra.setDataCompra(LocalDateTime.now());
 
